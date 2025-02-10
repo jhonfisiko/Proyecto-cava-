@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Estadísticas</title>
+    <script>
+        async function obtenerDatos() {
+            const url = "https://script.google.com/u/0/home/projects/1xdrjvs5S5Hxkm2dTxMlEDqP4wv4pqhsATeuCQomOpYwwN2NV5ZeZ0TNy/edit"; // Reemplázala con tu API de Google Sheets
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+            console.log(datos); // Aquí puedes procesar y mostrar los datos
+        }
+        window.onload = obtenerDatos;
+    </script>
+</head>
+<body>
+    <h1>Estadísticas en Tiempo Real</h1>
+    <div id="tabla"></div>
+</body>
+</html>

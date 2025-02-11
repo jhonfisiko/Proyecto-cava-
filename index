@@ -4,14 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard de Estadísticas</title>
-    <script>
-        async function obtenerDatos() {
-            const url = "https://script.google.com/u/0/home/projects/1xdrjvs5S5Hxkm2dTxMlEDqP4wv4pqhsATeuCQomOpYwwN2NV5ZeZ0TNy/edit"; // Reemplázala con tu API de Google Sheets
-            const respuesta = await fetch(url);
-            const datos = await respuesta.json();
-            console.log(datos); // Aquí puedes procesar y mostrar los datos
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Librería para gráficas -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
         }
-        window.onload = obtenerDatos;
-    </script>
+        canvas {
+            max-width: 600px;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
+
+    <h1>Dashboard de Estadísticas</h1>
+    <canvas id="grafico"></canvas>
+
+    <script>
+        async function obtenerDatos() {
+            const url = "https://script.google.com/macros/s/AKfycbysLiMe4qFSCSevdvANlZbATl-UMDhftT9DfAuZRhWOqTIWzc6W1a1oQJzSkXnztDVY0g/exec";
+            try {
+                const respuesta = await fetch(url);
+                if (!respuesta.ok) throw new Error("Error al obtener datos");
+
+                const datos = await respuesta.json();
+                console.log("Datos obtenidos:", datos);
+
+                if (!Array.isArray(datos) || datos.length < 2) {
+                    throw new Error("Formato de datos incorrecto");
+                }
+
+                // Extraer encabezados y valores
+                const etiquetas = datos[0].slice(1); // Omitir la primera columna (si es un índice)
+                const valores = datos.slice(1).map(row => row.slice(1)); // Omitir la primera columna
+
+                graficarDatos(etiquetas, valores);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        function graficarDatos(etiquetas, valores) {
+            const ctx = document.getElementById("grafico").getContext("2d");
+
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: etiquetas,
+                    datasets: valores.map((fila, i) => ({
+                        label: `Fila ${i + 1}`,
+                        data: fila.map(v => parseFloat(v) || 0), // Convertir a números
+                        backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        }
+
+        window.onload = obtenerDatos;
+    </script>
+
+</body>
+</html>

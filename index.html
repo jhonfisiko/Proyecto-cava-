@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Estadísticas</title>
+    <script>
+        async function obtenerDatos() {
+            const url = "https://script.google.com/macros/s/AKfycbysLiMe4qFSCSevdvANlZbATl-UMDhftT9DfAuZRhWOqTIWzc6W1a1oQJzSkXnztDVY0g/exec";
+            try {
+                const respuesta = await fetch(url);
+                if (!respuesta.ok) throw new Error("Error al obtener datos");
+
+                const datos = await respuesta.json();
+                console.log("Datos obtenidos:", datos);
+
+                if (!Array.isArray(datos) || datos.length < 1) {
+                    throw new Error("Formato de datos incorrecto");
+                }
+
+                mostrarTabla(datos);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("tabla").innerHTML = "<p>Error al cargar los datos.</p>";
+            }
+        }
+
+        function mostrarTabla(datos) {
+            let tablaHTML = "<table border='1' cellspacing='0' cellpadding='5'>";
+            
+            // Recorrer los datos y construir filas de la tabla
+            datos.forEach((fila, i) => {
+                tablaHTML += "<tr>";
+                fila.forEach(columna => {
+                    tablaHTML += i === 0 
+                        ? `<th>${columna}</th>`  // Primera fila como encabezado
+                        : `<td>${columna}</td>`;
+                });
+                tablaHTML += "</tr>";
+            });
+
+            tablaHTML += "</table>";
+            document.getElementById("tabla").innerHTML = tablaHTML;
+        }
+
+        window.onload = obtenerDatos;
+    </script>
+</head>
+<body>
+    <h1>Estadísticas en Tiempo Real</h1>
+    <div id="tabla">Cargando datos...</div>
+</body>
+</html>
